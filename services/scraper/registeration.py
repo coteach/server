@@ -2,6 +2,7 @@ from enum import Enum, auto
 from typing import Final
 
 from models.plan_origin import PlanOrigin
+from scrapers.cajhtp_scraper import CAJHTPScraper
 from scrapers.cshs_scraper import CSHSScraper, Scraper
 from scrapers.hnjh_scraper import HNJHScraper
 
@@ -11,6 +12,8 @@ class Origin(Enum):
     CSHS = auto()
     # 桃園市立興南國民中學
     HNJH = auto()
+    # 108科技領域資訊科技新課綱與素養導向資源分享
+    CAJHTP = auto()
 
     def create_scraper(self) -> Scraper:
         return scraper_factory[self]()
@@ -19,6 +22,7 @@ class Origin(Enum):
 scraper_factory: Final[dict] = {
     Origin.CSHS: lambda: CSHSScraper(Origin.CSHS.name),
     Origin.HNJH: lambda: HNJHScraper(Origin.HNJH.name),
+    Origin.CAJHTP: lambda: CAJHTPScraper(Origin.CAJHTP.name),
 }
 
 
@@ -34,5 +38,11 @@ Origins: Final[PlanOrigin] = [
         name="桃園市立興南國民中學",
         url="http://www2.hnjh.tyc.edu.tw/index.php",
         logo="https://upload.wikimedia.org/wikipedia/zh/d/d4/Hsing_Nan_Junior_High_Schoo_Logol.gif",
+    ),
+    PlanOrigin(
+        id=Origin.CAJHTP.name,
+        name="108科技領域資訊科技新課綱與素養導向資源分享",
+        url="http://www.cajh.tp.edu.tw/tech/",
+        logo="http://www.cajh.tp.edu.tw/tech/img/profile.jpg",
     ),
 ]
