@@ -7,6 +7,7 @@ import requests
 from bs4 import BeautifulSoup, ResultSet
 
 from models.plan import Plan, PlanFormat
+from .scraper import Scraper
 
 HOME_URL: Final[str] = "http://www.cshs.ntct.edu.tw"
 MAIN_URL: Final[str] = (
@@ -14,11 +15,7 @@ MAIN_URL: Final[str] = (
 )
 
 
-class CSHSScraper:
-    def __init__(self, origin_id: str):
-        assert isinstance(origin_id, str)
-        self.origin_id = origin_id
-
+class CSHSScraper(Scraper):
     async def get_plans(self) -> [Plan]:
         page_links = await self._get_page_links(MAIN_URL)
         documents = await self._get_documents(page_links)
