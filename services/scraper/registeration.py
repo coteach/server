@@ -6,6 +6,7 @@ from scrapers.cajhtp_scraper import CAJHTPScraper
 from scrapers.cshs_scraper import CSHSScraper, Scraper
 from scrapers.hnjh_scraper import HNJHScraper
 from scrapers.geocenter_scraper import GeocenterScraper
+from scrapers.hcc_scraper import HCCScraper
 
 
 class Origin(Enum):
@@ -17,6 +18,8 @@ class Origin(Enum):
     CAJHTP = auto()
     # 教育部地理學科中心 - 教學資源
     GEOCENTER = auto()
+    # 新竹市教育處國民教育輔導團
+    HCC = auto()
 
     def create_scraper(self) -> Scraper:
         return scraper_factory[self]()
@@ -27,6 +30,7 @@ scraper_factory: Final[dict] = {
     Origin.HNJH: lambda: HNJHScraper(Origin.HNJH.name),
     Origin.CAJHTP: lambda: CAJHTPScraper(Origin.CAJHTP.name),
     Origin.GEOCENTER: lambda: GeocenterScraper(Origin.GEOCENTER.name),
+    Origin.HCC: lambda: HCCScraper(Origin.HCC.name),
 }
 
 
@@ -53,6 +57,12 @@ Origins: Final[PlanOrigin] = [
         id=Origin.GEOCENTER.name,
         name="教育部地理學科中心-教學資源 > 分享類 > 性平課程教學教材",
         url="https://sites.google.com/view/geocenter/教學資源",
+        logo="",
+    ),
+    PlanOrigin(
+        id=Origin.HCC.name,
+        name="新竹市教育處國民教育輔導團",
+        url="https://guide.hcc.edu.tw/index.php",
         logo="",
     ),
 ]
