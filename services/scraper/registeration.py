@@ -7,6 +7,7 @@ from scrapers.cshs_scraper import CSHSScraper, Scraper
 from scrapers.hnjh_scraper import HNJHScraper
 from scrapers.geocenter_scraper import GeocenterScraper
 from scrapers.hcc_scraper import HCCScraper
+from scrapers.shareclass_scraper import ShareClassScraper
 
 
 class Origin(Enum):
@@ -20,6 +21,8 @@ class Origin(Enum):
     GEOCENTER = auto()
     # 新竹市教育處國民教育輔導團
     HCC = auto()
+    # ShareClass - 均一教育平台
+    SHARECLASS = auto()
 
     def create_scraper(self) -> Scraper:
         return scraper_factory[self]()
@@ -31,6 +34,7 @@ scraper_factory: Final[dict] = {
     Origin.CAJHTP: lambda: CAJHTPScraper(Origin.CAJHTP.name),
     Origin.GEOCENTER: lambda: GeocenterScraper(Origin.GEOCENTER.name),
     Origin.HCC: lambda: HCCScraper(Origin.HCC.name),
+    Origin.SHARECLASS: lambda: ShareClassScraper(Origin.SHARECLASS.name),
 }
 
 
@@ -64,5 +68,11 @@ Origins: Final[PlanOrigin] = [
         name="新竹市教育處國民教育輔導團",
         url="https://guide.hcc.edu.tw/index.php",
         logo="",
+    ),
+    PlanOrigin(
+        id=Origin.SHARECLASS.name,
+        name="ShareClass - 均一教育平台",
+        url="https://www.shareclass.org/",
+        logo="https://www.junyiacademy.org/favicon-32x32.png?v=20190827",
     ),
 ]
