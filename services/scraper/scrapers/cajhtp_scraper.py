@@ -13,7 +13,7 @@ MAIN_URL: Final[str] = "http://www.cajh.tp.edu.tw/tech/"
 
 
 class CAJHTPScraper(Scraper):
-    async def get_plans(self) -> [Plan]:
+    async def scrape(self) -> [Plan]:
         document = await self._get_document(MAIN_URL)
         plans = self._parse(MAIN_URL, document)
         return plans

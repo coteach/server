@@ -15,7 +15,7 @@ MAIN_URL: Final[str] = "https://guide.hcc.edu.tw/p/405-1142-224146,c3962.php"
 
 
 class HCCScraper(Scraper):
-    async def get_plans(self) -> [Plan]:
+    async def scrape(self) -> [Plan]:
         document = await self._get_document(MAIN_URL)
         plans = self._parse(MAIN_URL, document)
         return plans

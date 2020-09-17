@@ -16,10 +16,10 @@ MAIN_URL: Final[str] = (
 
 
 class CSHSScraper(Scraper):
-    async def get_plans(self) -> [Plan]:
+    async def scrape(self):
         page_links = await self._get_page_links(MAIN_URL)
-        documents = await self._get_documents(page_links)
-        plans = [self._parse(url, document) for url, document in documents.items()]
+        plans = await asyncio.gather(*[self._get_plans(url) for url in page_links])
+
         return list(itertools.chain(*plans))
 
     async def _get_page_links(self, url: str):
@@ -29,11 +29,13 @@ class CSHSScraper(Scraper):
 
         return list(pages)
 
-    async def _get_documents(self, downloadPages: str) -> dict:
-        table_rows = await asyncio.gather(
-            *[self._sort_page(page) for page in downloadPages]
+    async def _get_plans(self, url: str) -> [Plan]:
+        documents = await self._sort_page(url)
+        plans = await asyncio.gather(
+            *[self._parse(url, document) for url, document in documents.items()]
         )
-        return dict(ChainMap(*table_rows))
+
+        return list(itertools.chain(*plans))
 
     async def _sort_page(self, url: str) -> dict:
         document = await self._get_document(url)
@@ -44,7 +46,10 @@ class CSHSScraper(Scraper):
 
         is_category_pages, download_pages = self._get_category_pages(document)
         if is_category_pages:
-            return await self._get_documents(download_pages)
+            ducments = await asyncio.gather(
+                *[self._sort_page(page) for page in download_pages]
+            )
+            return dict(ChainMap(*ducments))
 
         hasNextPage, downloadPage = self._get_next_page(document)
         if hasNextPage:
@@ -83,7 +88,7 @@ class CSHSScraper(Scraper):
 
         return page != "", page
 
-    def _parse(self, url: str, document: BeautifulSoup) -> [Plan]:
+    async def _parse(self, url: str, document: BeautifulSoup) -> [Plan]:
         tages = document.select(".C-tableA2, .C-tableA3")
         plans = []
         for tag in tages:

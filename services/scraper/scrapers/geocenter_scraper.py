@@ -8,7 +8,7 @@ MAIN_URL: Final[str] = "https://sites.google.com/view/geocenter/教學資源"
 
 
 class GeocenterScraper(Scraper):
-    async def get_plans(self) -> [Plan]:
+    async def scrape(self) -> [Plan]:
         plan1 = Plan(
             origin_id=self.origin_id,
             name="「泰」Men「菲」常女？─外籍勞工之性別分工",

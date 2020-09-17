@@ -12,7 +12,7 @@ async def update_files():
 
 async def update_file(orgin: Origin):
     scraper = orgin.create_scraper()
-    scraper_task = asyncio.create_task(scraper.get_plans())
+    scraper_task = asyncio.create_task(scraper.scrape())
     file_plans = await PlanStore.read(orgin.name)
     web_plans = await scraper_task
 

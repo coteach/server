@@ -10,5 +10,5 @@ class Scraper(ABC):
 
     @classmethod
     @abstractmethod
-    async def get_plans(self) -> [Plan]:
+    async def scrape(self) -> [Plan]:
         return NotImplemented

@@ -5,7 +5,7 @@ from .scraper import Scraper
 
 
 class HNJHScraper(Scraper):
-    async def get_plans(self) -> [Plan]:
+    async def scrape(self) -> [Plan]:
         plan = Plan(
             origin_id=self.origin_id,
             name="各領域教案彙編",
