@@ -12,6 +12,7 @@ class PlanFormat(Enum):
     PDF = auto()
     PPT = auto()
     XLS = auto()
+    VIDEO = auto()
 
 
 def from_str(x: Any) -> str:
@@ -65,9 +66,9 @@ class Plan:
     title: Optional[str] = None
     page: Optional[str] = None
     formats: Optional[List[PlanFormat]] = None
-    writer: Optional[List[str]] = None
+    writers: Optional[List[str]] = None
     description: Optional[str] = None
-    grade: Optional[int] = None
+    grades: Optional[List[int]] = None
     subject: Optional[str] = None
     tages: Optional[str] = None
 
@@ -81,11 +82,13 @@ class Plan:
         formats = from_union(
             [lambda x: from_list(to_enum, x), from_none], obj.get("formats")
         )
-        writer = from_union(
-            [lambda x: from_list(from_str, x), from_none], obj.get("writer")
+        writers = from_union(
+            [lambda x: from_list(from_str, x), from_none], obj.get("writers")
         )
         description = from_union([from_str, from_none], obj.get("description"))
-        grade = from_union([from_int, from_none], obj.get("grade"))
+        grades = from_union(
+            [lambda x: from_list(from_int, x), from_none], obj.get("grades")
+        )
         subject = from_union([from_str, from_none], obj.get("subject"))
         tages = from_union([from_str, from_none], obj.get("tages"))
         return Plan(
@@ -94,9 +97,9 @@ class Plan:
             title,
             page,
             formats,
-            writer,
+            writers,
             description,
-            grade,
+            grades,
             subject,
             tages,
         )
@@ -110,11 +113,13 @@ class Plan:
         result["formats"] = from_union(
             [lambda x: from_list(from_enum, x), from_none], self.formats
         )
-        result["writer"] = from_union(
-            [lambda x: from_list(from_str, x), from_none], self.writer
+        result["writers"] = from_union(
+            [lambda x: from_list(from_str, x), from_none], self.writers
         )
         result["description"] = from_union([from_str, from_none], self.description)
-        result["grade"] = from_union([from_int, from_none], self.grade)
+        result["grades"] = from_union(
+            [lambda x: from_list(from_int, x), from_none], self.grades
+        )
         result["subject"] = from_union([from_str, from_none], self.subject)
         result["tages"] = from_union([from_str, from_none], self.tages)
         return result
