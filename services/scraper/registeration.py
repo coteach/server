@@ -4,9 +4,10 @@ from typing import Final
 from models.plan_origin import PlanOrigin
 from scrapers.cajhtp_scraper import CAJHTPScraper
 from scrapers.cshs_scraper import CSHSScraper, Scraper
-from scrapers.hnjh_scraper import HNJHScraper
 from scrapers.geocenter_scraper import GeocenterScraper
+from scrapers.greenschool_scraper import GreenSchoolScraper
 from scrapers.hcc_scraper import HCCScraper
+from scrapers.hnjh_scraper import HNJHScraper
 from scrapers.shareclass_scraper import ShareClassScraper
 
 
@@ -23,6 +24,8 @@ class Origin(Enum):
     HCC = auto()
     # ShareClass - 均一教育平台
     SHARECLASS = auto()
+    # 教育部綠色學校夥伴網路
+    GREENSCHOOL = auto()
 
     def create_scraper(self) -> Scraper:
         return scraper_factory[self]()
@@ -35,6 +38,7 @@ scraper_factory: Final[dict] = {
     Origin.GEOCENTER: lambda: GeocenterScraper(Origin.GEOCENTER.name),
     Origin.HCC: lambda: HCCScraper(Origin.HCC.name),
     Origin.SHARECLASS: lambda: ShareClassScraper(Origin.SHARECLASS.name),
+    Origin.GREENSCHOOL: lambda: GreenSchoolScraper(Origin.GREENSCHOOL.name),
 }
 
 
@@ -74,5 +78,11 @@ Origins: Final[PlanOrigin] = [
         name="ShareClass - 均一教育平台",
         url="https://www.shareclass.org/",
         logo="https://www.junyiacademy.org/favicon-32x32.png?v=20190827",
+    ),
+    PlanOrigin(
+        id=Origin.GREENSCHOOL.name,
+        name="教育部綠色學校夥伴網路 > 資源分享 > 教案(材)分享專區",
+        url="https://www.greenschool.moe.edu.tw/",
+        logo="https://www.greenschool.moe.edu.tw/gs2/x/img/icon.png",
     ),
 ]
