@@ -7,6 +7,7 @@ T = TypeVar("T")
 
 
 class PlanFormat(Enum):
+    NONE = auto()
     DOC = auto()
     HTML = auto()
     PDF = auto()
@@ -116,7 +117,8 @@ class Plan:
         result["writers"] = from_union(
             [lambda x: from_list(from_str, x), from_none], self.writers
         )
-        result["description"] = from_union([from_str, from_none], self.description)
+        result["description"] = from_union(
+            [from_str, from_none], self.description)
         result["grades"] = from_union(
             [lambda x: from_list(from_int, x), from_none], self.grades
         )

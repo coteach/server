@@ -6,7 +6,6 @@ from typing import Final
 
 import requests
 from bs4 import BeautifulSoup, ResultSet
-
 from models.plan import Plan, PlanFormat
 
 from .scraper import Scraper
@@ -26,13 +25,6 @@ class HCCScraper(Scraper):
 
         return BeautifulSoup(response.text, "html.parser")
 
-    def _get_format(self, text: str) -> PlanFormat:
-        return {
-            ".doc": PlanFormat.DOC,
-            ".docx": PlanFormat.DOC,
-            ".pdf": PlanFormat.PDF,
-        }[text]
-
     def _parse(self, url: str, document: BeautifulSoup) -> [Plan]:
         tages = document.select(".mptattach a")
         plans = []
@@ -43,7 +35,7 @@ class HCCScraper(Scraper):
                 origin_id=self.origin_id,
                 name=name,
                 page=url,
-                formats=[self._get_format(extension)],
+                formats=[self._get_format_from_extension(extension)],
             )
             plan.title = plan.name
 
