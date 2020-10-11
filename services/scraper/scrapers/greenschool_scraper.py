@@ -72,7 +72,7 @@ class GreenSchoolScraper(Scraper):
             description=tag.contents[2].strip(),
             page=self._get_href(anchor_tag),
             formats=self._get_formats(anchor_tag),
-            tages=tag.find("span").text,
+            tags=[tag.find("span").text],
         )
         plan.title = plan.name
 
@@ -99,7 +99,7 @@ class GreenSchoolScraper(Scraper):
     def _get_title(self, tag: ResultSet) -> str:
         return tag.get("title")
 
-    def _get_formats(self, tag: ResultSet) -> PlanFormat:
+    def _get_formats(self, tag: ResultSet) -> [PlanFormat]:
         format = PlanFormat.HTML
 
         if "youtube" in self._get_href(tag):

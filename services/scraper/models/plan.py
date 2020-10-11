@@ -70,8 +70,9 @@ class Plan:
     writers: Optional[List[str]] = None
     description: Optional[str] = None
     grades: Optional[List[int]] = None
-    subject: Optional[str] = None
-    tages: Optional[str] = None
+    subjects: Optional[List[str]] = None
+    tags: Optional[List[str]] = None
+    img: Optional[str] = None
 
     @staticmethod
     def from_dict(obj: Any) -> "Plan":
@@ -117,8 +118,7 @@ class Plan:
         result["writers"] = from_union(
             [lambda x: from_list(from_str, x), from_none], self.writers
         )
-        result["description"] = from_union(
-            [from_str, from_none], self.description)
+        result["description"] = from_union([from_str, from_none], self.description)
         result["grades"] = from_union(
             [lambda x: from_list(from_int, x), from_none], self.grades
         )

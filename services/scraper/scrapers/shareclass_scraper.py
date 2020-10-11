@@ -51,7 +51,7 @@ class ShareClassScraper(Scraper):
             writers=[meta.author.name],
             description=meta.intro,
             grades=course.grades,
-            subject=self._get_subject(course.units, page),
+            subjects=self._get_subject(course.units),
         )
         plan.title = plan.name
         return [plan]
@@ -69,8 +69,8 @@ class ShareClassScraper(Scraper):
         formats = [FORMATS[material[2]] for material in materials]
         return list(set(formats))
 
-    def _get_subject(self, units: list, page):
+    def _get_subject(self, units: list) -> [str]:
         if units:
-            return units[0][0]
+            return [units[0][0]]
         else:
             return None
