@@ -11,13 +11,16 @@ from scrapers.hcc_scraper import HCCScraper
 from scrapers.hnjh_scraper import HNJHScraper
 from scrapers.moe_scraper import MoeScraper
 from scrapers.shareclass_scraper import ShareClassScraper
+from scrapers.sportsbox_scraper import SportsboxScraper
 
 
 class Origin(Enum):
     # 臺灣藝術教育網
-    ARTE=auto()
+    ARTE = auto()
     # 媒體素養教育資源網
-    MOE=auto()
+    MOE = auto()
+    # 體育課程與教育資源網
+    SPORTSBOX = auto()
     # 國立竹山高級中學
     CSHS = auto()
     # 桃園市立興南國民中學
@@ -40,6 +43,7 @@ class Origin(Enum):
 scraper_factory: Final[dict] = {
     Origin.ARTE: lambda: ArteScraper(Origin.ARTE.name),
     Origin.MOE: lambda: MoeScraper(Origin.MOE.name),
+    Origin.SPORTSBOX: lambda: SportsboxScraper(Origin.SPORTSBOX.name),
     Origin.CSHS: lambda: CSHSScraper(Origin.CSHS.name),
     Origin.HNJH: lambda: HNJHScraper(Origin.HNJH.name),
     Origin.CAJHTP: lambda: CAJHTPScraper(Origin.CAJHTP.name),
@@ -62,6 +66,12 @@ Origins: Final[PlanOrigin] = [
         name="媒體素養教育資源網",
         url="https://mlearn.moe.gov.tw/",
         logo="https://mlearn.moe.gov.tw/lib/Images/favicon.ico",
+    ),
+    PlanOrigin(
+        id=Origin.SPORTSBOX.name,
+        name="體育課程與教育資源網",
+        url="https://sportsbox.sa.gov.tw/",
+        logo="",
     ),
     PlanOrigin(
         id=Origin.CSHS.name,
