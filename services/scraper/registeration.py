@@ -2,6 +2,7 @@ from enum import Enum, auto
 from typing import Final
 
 from models.plan_origin import PlanOrigin
+from scrapers.arte_scraper import ArteScraper
 from scrapers.cajhtp_scraper import CAJHTPScraper
 from scrapers.cshs_scraper import CSHSScraper, Scraper
 from scrapers.geocenter_scraper import GeocenterScraper
@@ -12,6 +13,8 @@ from scrapers.shareclass_scraper import ShareClassScraper
 
 
 class Origin(Enum):
+    # 臺灣藝術教育網
+    ARTE=auto()
     # 國立竹山高級中學
     CSHS = auto()
     # 桃園市立興南國民中學
@@ -32,6 +35,7 @@ class Origin(Enum):
 
 
 scraper_factory: Final[dict] = {
+    Origin.ARTE: lambda: ArteScraper(Origin.ARTE.name),
     Origin.CSHS: lambda: CSHSScraper(Origin.CSHS.name),
     Origin.HNJH: lambda: HNJHScraper(Origin.HNJH.name),
     Origin.CAJHTP: lambda: CAJHTPScraper(Origin.CAJHTP.name),
@@ -43,6 +47,12 @@ scraper_factory: Final[dict] = {
 
 
 Origins: Final[PlanOrigin] = [
+    PlanOrigin(
+        id=Origin.ARTE.name,
+        name="臺灣藝術教育網",
+        url="https://ed.arte.gov.tw/ch/index.aspx",
+        logo="https://ed.arte.gov.tw/ch/images/favicon.ico",
+    ),
     PlanOrigin(
         id=Origin.CSHS.name,
         name="國立竹山高級中學 > 教學資源下載",
