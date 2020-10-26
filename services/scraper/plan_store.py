@@ -22,7 +22,7 @@ class PlanStore:
         with cls.open_file(file_name, "r") as file:
             data = json.load(file)
             plans = [Plan.from_dict(dict) for dict in data]
-            return {plan.name: plan for plan in plans}
+            return {plan.id: plan for plan in plans}
 
     @classmethod
     async def write_original_plans(cls, file_name: str, plans: [Plan]) -> str:

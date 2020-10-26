@@ -24,8 +24,8 @@ class CSHSScraper(Scraper):
 
     async def _get_page_links(self, url: str):
         document = await self._get_document(url)
-        tages = document.select(".C-tableA3 a")
-        pages = map(lambda tag: self._get_href(tag), tages)
+        tags = document.select(".C-tableA3 a")
+        pages = map(lambda tag: self._get_href(tag), tags)
 
         return list(pages)
 
@@ -72,8 +72,8 @@ class CSHSScraper(Scraper):
         return "教案" in breadcrumb and "下載" in breadcrumb
 
     def _get_category_pages(self, soup: BeautifulSoup) -> (bool, [str]):
-        tages = soup.select(".title-A01d a")
-        pages = list(map(lambda tag: HOME_URL + tag.get("href"), tages))
+        tags = soup.select(".title-A01d a")
+        pages = list(map(lambda tag: HOME_URL + tag.get("href"), tags))
 
         return len(pages) > 0, pages
 
@@ -89,16 +89,16 @@ class CSHSScraper(Scraper):
         return page != "", page
 
     async def _parse(self, url: str, document: BeautifulSoup) -> [Plan]:
-        tages = document.select(".C-tableA2, .C-tableA3")
+        tags = document.select(".C-tableA2, .C-tableA3")
         plans = []
-        for tag in tages:
+        for index, tag in enumerate(tags):
             plan = Plan(
+                id=self._hash_id(self._get_unique_path(url, index)),
                 origin_id=self.origin_id,
-                name=tag.findAll("td")[2].text,
+                title=tag.findAll("td")[2].text,
                 page=url,
                 formats=[PlanFormat.PDF],
             )
-            plan.title = plan.name
 
             plans.append(plan)
 

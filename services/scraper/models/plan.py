@@ -62,8 +62,8 @@ def to_class(c: Type[T], x: Any) -> dict:
 
 @dataclass
 class Plan:
+    id: Optional[str] = None
     origin_id: Optional[str] = None
-    name: Optional[str] = None
     title: Optional[str] = None
     page: Optional[str] = None
     formats: Optional[List[PlanFormat]] = None
@@ -73,12 +73,13 @@ class Plan:
     subjects: Optional[List[str]] = None
     tags: Optional[List[str]] = None
     img: Optional[str] = None
+    removed: bool = False
 
     @staticmethod
     def from_dict(obj: Any) -> "Plan":
         assert isinstance(obj, dict)
+        id = from_union([from_str, from_none], obj.get("id"))
         origin_id = from_union([from_str, from_none], obj.get("origin_id"))
-        name = from_union([from_str, from_none], obj.get("name"))
         title = from_union([from_str, from_none], obj.get("title"))
         page = from_union([from_str, from_none], obj.get("page"))
         formats = from_union(
@@ -91,25 +92,33 @@ class Plan:
         grades = from_union(
             [lambda x: from_list(from_int, x), from_none], obj.get("grades")
         )
-        subject = from_union([from_str, from_none], obj.get("subject"))
-        tages = from_union([from_str, from_none], obj.get("tages"))
+        subjects = from_union(
+            [lambda x: from_list(from_str, x), from_none], obj.get("subjects")
+        )
+        tags = from_union(
+            [lambda x: from_list(from_str, x), from_none], obj.get("tags")
+        )
+        img = from_union([from_str, from_none], obj.get("img"))
+        removed = obj.get("removed")
         return Plan(
+            id,
             origin_id,
-            name,
             title,
             page,
             formats,
             writers,
             description,
             grades,
-            subject,
-            tages,
+            subjects,
+            tags,
+            img,
+            removed,
         )
 
     def to_dict(self) -> dict:
         result: dict = {}
+        result["id"] = from_union([from_str, from_none], self.id)
         result["origin_id"] = from_union([from_str, from_none], self.origin_id)
-        result["name"] = from_union([from_str, from_none], self.name)
         result["title"] = from_union([from_str, from_none], self.title)
         result["page"] = from_union([from_str, from_none], self.page)
         result["formats"] = from_union(
@@ -122,6 +131,12 @@ class Plan:
         result["grades"] = from_union(
             [lambda x: from_list(from_int, x), from_none], self.grades
         )
-        result["subject"] = from_union([from_str, from_none], self.subject)
-        result["tages"] = from_union([from_str, from_none], self.tages)
+        result["subjects"] = from_union(
+            [lambda x: from_list(from_str, x), from_none], self.subjects
+        )
+        result["tags"] = from_union(
+            [lambda x: from_list(from_str, x), from_none], self.tags
+        )
+        result["img"] = from_union([from_str, from_none], self.img)
+        result["removed"] = self.removed
         return result

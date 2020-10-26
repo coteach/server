@@ -13,7 +13,6 @@ async def update_files():
     await PlanStore.close_plans_file()
 
 
-
 async def update_file(origin: Origin):
     plans = await merge_plans(origin)
     json_string = await PlanStore.write_original_plans(origin.name, plans)
@@ -27,8 +26,8 @@ async def merge_plans(origin: Origin) -> [Plan]:
     web_plans = await scraper_task
 
     for web_plan in web_plans:
-        if web_plan.name not in file_plans.keys():
-            file_plans[web_plan.name] = web_plan
+        if web_plan.id not in file_plans.keys():
+            file_plans[web_plan.id] = web_plan
 
     return file_plans.values()
 

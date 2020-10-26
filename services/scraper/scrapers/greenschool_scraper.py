@@ -33,7 +33,10 @@ class GreenSchoolScraper(Scraper):
     ) -> [Plan]:
         document = await self._post(cookies, document, page)
         plans = await asyncio.gather(
-            *[self._parse(tag) for tag in self._get_list_group(document)]
+            *[
+                self._parse(tag, self._get_id(page, index))
+                for index, tag in enumerate(self._get_list_group(document))
+            ]
         )
 
         return list(plans)
@@ -63,18 +66,18 @@ class GreenSchoolScraper(Scraper):
 
         return self._get_document(response)
 
-    async def _parse(self, tag: ResultSet) -> [Plan]:
+    async def _parse(self, tag: ResultSet, id: str) -> [Plan]:
         anchor_tag = tag.find("a")
 
         plan = Plan(
+            id=id,
             origin_id=self.origin_id,
-            name=anchor_tag.text,
+            title=anchor_tag.text,
             description=tag.contents[2].strip(),
             page=self._get_href(anchor_tag),
             formats=self._get_formats(anchor_tag),
             tags=[tag.find("span").text],
         )
-        plan.title = plan.name
 
         return plan
 
@@ -108,3 +111,6 @@ class GreenSchoolScraper(Scraper):
             format = PlanFormat.PDF
 
         return [format]
+
+    def _get_id(self, page: int, index: int) -> str:
+        return self._hash_id(self._get_unique_path(MAIN_URL, page * 100 + index))

@@ -43,17 +43,19 @@ class ShareClassScraper(Scraper):
 
     async def _parse(self, course: Course, page) -> [Plan]:
         meta = course.meta
+        page = HOME_URL + meta.course_page_link
+
         plan = Plan(
+            id=self._hash_id(page),
             origin_id=self.origin_id,
-            name=meta.name,
-            page=HOME_URL + meta.course_page_link,
+            title=meta.name,
+            page=page,
             formats=self._get_formats(course.materials),
             writers=[meta.author.name],
             description=meta.intro,
             grades=course.grades,
             subjects=self._get_subject(course.units),
         )
-        plan.title = plan.name
         return [plan]
 
     def _get_formats(self, materials: List[List[Union[int, str]]]):

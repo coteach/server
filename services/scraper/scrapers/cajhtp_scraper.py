@@ -25,22 +25,23 @@ class CAJHTPScraper(Scraper):
         return BeautifulSoup(response.text, "html.parser")
 
     def _parse(self, url: str, document: BeautifulSoup) -> [Plan]:
-        tages = document.select("td")
+        tags = document.select("td")
         plans = []
-        for tag in tages:
+
+        for index, tag in enumerate(tags):
             name = tag.find("h3").text
 
             if "示例" in name:
                 break
 
             plan = Plan(
+                id=self._hash_id(self._get_unique_path(url, index)),
                 origin_id=self.origin_id,
-                name=name,
+                title=name,
                 page=url,
                 formats=[PlanFormat.HTML],
                 description=tag.find("p").text.replace("\r\n                  ", ";"),
             )
-            plan.title = plan.name
 
             plans.append(plan)
 

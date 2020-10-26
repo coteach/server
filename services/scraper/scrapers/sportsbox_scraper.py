@@ -1,4 +1,3 @@
-# https://sportsbox.sa.gov.tw/material/detail/301
 from bs4 import BeautifulSoup, NavigableString
 import os
 from models.plan import Plan
@@ -7,17 +6,16 @@ from util.logger import logger
 from util.session import Session
 import asyncio
 
+
 class SportsboxScraper(Scraper):
     async def scrape(self) -> [Plan]:
         self.session = Session()
         start = 1
-        end = self.getLast()+1
+        end = self.getLast() + 1
 
-        plans = await asyncio.gather(
-            *[self.job(x) for x in range(start, end)]
-        )
+        plans = await asyncio.gather(*[self.job(x) for x in range(start, end)])
 
-        return list(filter(None,plans))
+        return list(filter(None, plans))
 
     async def job(self, id):
         url = "https://sportsbox.sa.gov.tw/material/detail/" + str(id)
@@ -25,23 +23,23 @@ class SportsboxScraper(Scraper):
         if res is None:
             logger.warning(url + " is None")
             return None
-        soup = BeautifulSoup(res.content, 'html.parser')
+        soup = BeautifulSoup(res.content, "html.parser")
         title = soup.select_one("div.article_titleBox div.h4")
         if title is None:
             logger.warning(url + " is None because not find title")
             return None
         logger.info("GET data: " + url)
         p = self.parser(soup, title.text, url)
-        p.name = "/material/detail/" + str(id)
         return p
 
-    def parser(self, soup, title, url):
+    def parser(self, soup, title, url) -> Plan:
         fileInContent = True
         grades = []
         tags = []
         formats = set()
         for infoRow in soup.select(
-                "div.right_dataBox.box_shadow.b_radius div.row.infoRow div.col-12"):
+            "div.right_dataBox.box_shadow.b_radius div.row.infoRow div.col-12"
+        ):
             # tags, grades
             for tagEle in infoRow.select("div.article_tag.rounded"):
                 try:
@@ -54,17 +52,20 @@ class SportsboxScraper(Scraper):
             # formats
             # 舊版網頁會將formats放在article_box
             eles = infoRow.select(
-                "div.row.no-gutters.article_box_file div.col.file_name a")
+                "div.row.no-gutters.article_box_file div.col.file_name a"
+            )
             for a in eles:
                 if fileInContent:
                     fileInContent = False
-                formats.add(self._get_format_from_extension(os.path.splitext(a.text)[1]))
+                formats.add(
+                    self._get_format_from_extension(os.path.splitext(a.text)[1])
+                )
 
         # tags, writers
         # 舊版網頁會有些tags放在editBox
         writers = set()
         # https://stackoverflow.com/questions/4188933/how-do-i-select-the-innermost-element
-        for p in soup.select('div.editBox p'):
+        for p in soup.select("div.editBox p"):
             if not fileInContent:
                 key = None
                 for strong in p.select("strong"):  # id 1~223
@@ -78,7 +79,7 @@ class SportsboxScraper(Scraper):
                             else:
                                 writers = writers.union(set(v.split("、")))
                         elif key in ["獎項", "教案名稱"]:
-                            tags.append(key+":" + arr[1])
+                            tags.append(key + ":" + arr[1])
                     elif key in ["作者", "姓名"]:
                         writers.add(strong.text.replace("、", ""))
 
@@ -86,8 +87,8 @@ class SportsboxScraper(Scraper):
             # 231~301 file In Content
             # TODO
             # else: # https://sportsbox.sa.gov.tw/material/detail/231
-                # print("file In Content")
-                # after=p.select_one("span strong a").next_siblings
+            # print("file In Content")
+            # after=p.select_one("span strong a").next_siblings
 
         img = ""
         content = soup.select_one("div.article_contentBox div.editBox").text
@@ -100,6 +101,7 @@ class SportsboxScraper(Scraper):
         #     content += str(section)
 
         return Plan(
+            id=self._hash_id(url),
             origin_id=self.origin_id,
             title=title,
             writers=list(writers),
@@ -109,7 +111,7 @@ class SportsboxScraper(Scraper):
             subjects=["體育"],
             formats=list(formats),
             description=content,
-            img=img
+            img=img,
         )
 
     def audience_parser(self, content):
@@ -129,8 +131,9 @@ class SportsboxScraper(Scraper):
             if res is None:
                 logger.warning(url + " is None")
                 return
-            soup = BeautifulSoup(res.content, 'html.parser')
-            href = soup.select_one(
-                "div.itemBox.unit3_v.rounded.box_shadow.itemCard a")['href']
+            soup = BeautifulSoup(res.content, "html.parser")
+            href = soup.select_one("div.itemBox.unit3_v.rounded.box_shadow.itemCard a")[
+                "href"
+            ]
             l.append(int(href.replace("/material/detail/", "")))
         return max(l)

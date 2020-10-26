@@ -26,18 +26,18 @@ class HCCScraper(Scraper):
         return BeautifulSoup(response.text, "html.parser")
 
     def _parse(self, url: str, document: BeautifulSoup) -> [Plan]:
-        tages = document.select(".mptattach a")
+        tags = document.select(".mptattach a")
         plans = []
-        for tag in tages:
+        for index, tag in enumerate(tags):
             name, extension = os.path.splitext(tag.text)
 
             plan = Plan(
+                id=self._get_unique_path(MAIN_URL, index),
                 origin_id=self.origin_id,
-                name=name,
+                title=name,
                 page=url,
                 formats=[self._get_format_from_extension(extension)],
             )
-            plan.title = plan.name
 
             plans.append(plan)
 
