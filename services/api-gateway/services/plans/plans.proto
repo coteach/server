@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+service PlansRpc {
+  rpc View (ViewRequest) returns (Empty);
+}
+
+message Empty {}
+
+// 檢視教案
+message ViewRequest {
+  // 教案識別碼
+  string id = 1;
+}
